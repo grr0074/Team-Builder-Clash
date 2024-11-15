@@ -1,0 +1,90 @@
+/* Global styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #333; /* Dark grey background */
+  color: white; /* White text color */
+}
+
+/* Navbar styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #222; /* Darker grey background for navbar */
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.navbar-left button,
+.navbar-right button {
+  background-color: #e74c3c; /* Red button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 25px; /* Rounded buttons */
+  font-size: 16px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-left button:hover,
+.navbar-right button:hover {
+  background-color: #c0392b; /* Darker red on hover */
+}
+
+.navbar-right span {
+  margin-right: 15px;
+}
+
+/* Main content styles */
+main {
+  padding-top: 60px; /* Offset for the fixed navbar */
+  padding: 20px;
+  text-align: center;
+}
+
+.home {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #444; /* Slightly lighter grey */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.home h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.home p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+/* Button styling for login/signup */
+button {
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 20px;
+  background-color: #e74c3c; /* Red color */
+  border-radius: 25px;
+  border: none;
+  color: white;
+}
+
+button:hover {
+  background-color: #c0392b; /* Darker red on hover */
+}
+
+button:focus {
+  outline: none;
+}
