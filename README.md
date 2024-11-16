@@ -31,11 +31,10 @@ Press Start to run 2 server, Apache and MYSQL, for MYSQL, if anyone got problem 
 After open XAMPP Control Panel. on MySQL line, click config => my.ini. Change 2 lines "port=..." into the port you like, which must be free for connection
 
 
-After that, file XAMPP folder, xampp/phpAdmin/config.inc.php file, add this line where X is the port change.
-
-'''
+After that, file XAMPP folder, xampp/phpAdmin/config.inc.php file, add this line where X is the port change above.
+```
 $cfg['Servers'][$i]['port'] = 'X';
-'''
+```
 
 
 After download the git, or clone.
