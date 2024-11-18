@@ -3,11 +3,24 @@ import { PageProvider, usePage } from './PageContext'; // Import the PageContext
 import SignUp from './SignUp';  // Import the SignUp page
 import Login from './Login';    // Import the Login page
 import './Home.css';            // Include the styles
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import Edashboard from './Edashboard.jsx';
 
 function App() {
   return (
     <PageProvider>
+      
+
+      <BrowserRouter>
       <Main />
+      <Routes>
+        
+        <Route path ='/login' element ={<Login></Login>}> </Route>
+        <Route path ='/dashboard' element ={<Edashboard> </Edashboard>} > </Route>
+      </Routes>
+    </BrowserRouter>
+
+    
     </PageProvider>
   );
 }

@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
 import './LogIn.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Main from "./App.js";
+
 
 function Login({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate logging in by storing a token
-    localStorage.setItem('token', 'fake-token');
-    setUser({ email });
+    axios.post('http://localhost:3000/login', {email, password})
+    .then(result => {
+      console.log(result);
+    
+      navigate('/dashboard');
+      Main.setCurrentPage('home')
+
+  })
+    .catch(err => console.log(err))
+
+
   };
 
   return (
