@@ -1,54 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { PageProvider, usePage } from './PageContext'; // Import the PageContext
-import SignUp from './SignUp';  // Import the SignUp page
-import Login from './Login';    // Import the Login page
-import './Home.css';            // Include the styles
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import { PageProvider, usePage } from './PageContext';
+import SignUp from './SignUp';
+import Login from './Login';
+import './Home.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Edashboard from './Edashboard.jsx';
 
 function App() {
   return (
     <PageProvider>
-      
-
       <BrowserRouter>
-      <Main />
-      <Routes>
-        
-        <Route path ='/login' element ={<Login></Login>}> </Route>
-        <Route path ='/dashboard' element ={<Edashboard> </Edashboard>} > </Route>
-      </Routes>
-    </BrowserRouter>
-
-    
+        <Main />
+        <Routes>
+          <Route path='/login' element={<Login />} />
+          <Route path='/dashboard' element={<Edashboard />} />
+        </Routes>
+      </BrowserRouter>
     </PageProvider>
   );
 }
 
 function Main() {
-  const { currentPage, setCurrentPage } = usePage(); // Access the context
-  const [user, setUser] = useState(null); // Track logged-in user
+  const { currentPage, setCurrentPage } = usePage();
+  const [user, setUser] = useState(null);
 
-  // Check for existing user (simulate login using token from localStorage)
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Simulate fetching user info from a token or backend
-      setUser({ email: 'user@example.com' });  // Example user info
+      setUser({ email: 'user@example.com' });
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');  // Remove session token
-    setUser(null);  // Clear user state
-    setCurrentPage('home');  // Go back to home page
+    localStorage.removeItem('token');
+    setUser(null);
+    setCurrentPage('home');
   };
 
-  // Dynamically render pages based on the current page
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
-        return <Home />; // Home page content
+        return <Home />;
       case 'login':
         return <Login setUser={setUser} />;
       case 'signup':
@@ -86,7 +78,6 @@ function Main() {
   );
 }
 
-// Home component with welcome message and description
 const Home = () => (
   <div className="home">
     <h1>Welcome to Team Builder Clash</h1>
