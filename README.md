@@ -21,16 +21,18 @@ To fully get a testing enviorment I would follow the first solution, copy and pa
 Axios is also used for local testing so run the following command if it is not installed : 
 npm install axios
 
-More dependency for frontend including
-'''
+**More dependency for frontend including:**
+
 npm install react-router-dom bootstrap-icons
-'''
 
 
-In Server side, to run the server side, first, move to Server folder by
-'''
+
+**In Server side, to run the server side, first, move to Server folder by**
+**
 cd server
-'''
+**
 Then, install dependency, including:
-'''
+
 npm install mysql express body-parser cors jsonwebtoken 
+
+
