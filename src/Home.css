@@ -11,7 +11,8 @@ body {
 .navbar {
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
+  align-items: center;
+  padding: 8px 20px; /* Adjusted for smaller navbar */
   background-color: #222; /* Darker grey background for navbar */
   position: fixed;
   top: 0;
@@ -24,10 +25,10 @@ body {
   background-color: #e74c3c; /* Red button */
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px; /* Adjusted padding for smaller buttons */
   cursor: pointer;
   border-radius: 25px; /* Rounded buttons */
-  font-size: 16px;
+  font-size: 14px; /* Slightly smaller font size */
 }
 
 .navbar-right {
@@ -41,12 +42,13 @@ body {
 }
 
 .navbar-right span {
-  margin-right: 15px;
+  margin-right: 10px; /* Adjusted spacing */
+  font-size: 14px; /* Smaller text size for navbar */
 }
 
 /* Main content styles */
 main {
-  padding-top: 60px; /* Offset for the fixed navbar */
+  padding-top: 70px; /* Offset for the fixed navbar */
   padding: 20px;
   text-align: center;
 }
@@ -88,3 +90,5 @@ button:hover {
 button:focus {
   outline: none;
 }
+
+
