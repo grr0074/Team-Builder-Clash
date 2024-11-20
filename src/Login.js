@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import './LogIn.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Main from "./App.js";
 
 
 function Login({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [Error, setError] = useState('');
 
   const navigate = useNavigate();
 
@@ -16,9 +16,17 @@ function Login({ setUser }) {
     axios.post('http://localhost:3000/login', {email, password})
     .then(result => {
       console.log(result);
-    
-      navigate('/dashboard');
-      Main.setCurrentPage('home')
+      if(result.data.loginStatus && result.data.Admin){
+        
+        navigate('/admindashboard');
+      }else if(result.data.loginStatus) {
+        navigate('/dashboard');
+      }else{
+        setError(result.data.Error)
+      }
+
+      return email;
+
 
   })
     .catch(err => console.log(err))
@@ -30,6 +38,9 @@ function Login({ setUser }) {
     <div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
+        <div classname = "text-danger">
+          {Error && Error}
+        </div>
         <input
           type="email"
           placeholder="Enter your email"
@@ -49,4 +60,3 @@ function Login({ setUser }) {
 }
 
 export default Login;
-

@@ -1,21 +1,51 @@
 import React, { useState } from 'react';
 import './SignUp.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+
 
 function SignUp({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [Error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const navvigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // For now, we just simulate a signup and set a token in localStorage
-    localStorage.setItem('token', 'fake-token');
-    setUser({ email });
+    axios.post('http://localhost:3000/signup', {name, email, password})
+    .then(result => {
+      console.log(result);
+
+      if(result.data.SignupStatus){
+        navigate('/login'); 
+      }else{
+        setError(result.data.Error)
+      }
+
+  })
+    .catch(err => console.log(err))
+
+
   };
+
+
 
   return (
     <div>
       <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
+        <div classname = "text-danger">
+          {Error && Error}
+        </div>
+        <input
+            type="name"
+          placeholder="Enter your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <input
           type="email"
           placeholder="Enter your email"
@@ -33,5 +63,7 @@ function SignUp({ setUser }) {
     </div>
   );
 }
+
+
 
 export default SignUp;
