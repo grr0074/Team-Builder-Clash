@@ -116,13 +116,13 @@ app.post('/dashboard/assignskill', (req,res) =>{
 })
 
 /* Get Projects based on emailheard */
-
+/** 
 app.get('/api/projects', (req, res) => {
-    const email = req.body;
-    console.log(req.body);
+    const email = req.query.email;
+    console.log(req.query);
     console.log(email);
 
-    /*
+    
     const sql4 = "SELECT p.PJID, p.pName FROM Employees e JOIN Project_Assignment pa ON e.Emp_id = pa.Emp_id JOIN Projects p ON pa.PJID = p.PJID WHERE e.eEmail = ?;";
     db.query(sql4, (err, results) => {
         if (err) {
@@ -133,13 +133,28 @@ app.get('/api/projects', (req, res) => {
             id: row.PJID,
             projectName: row.pName
         }));        
-
         res.json(projects);
-
     });
-    */
 });
+*/
+app.get('/api/projects', (req, res) => {
+    const email = req.query.email; // Access email from query parameters
+    console.log(req.query); // Log the entire query object for debugging
+    console.log(email); // Log the email for debugging
+    const sql4 = "SELECT p.PJID, p.pName FROM Employees e JOIN Project_Assignment pa ON e.Emp_id = pa.Emp_id JOIN Projects p ON pa.PJID = p.PJID WHERE e.eEmail = ?;";
+    db.query(sql4, [email], (err, results) => { // Pass email as a parameter to the query
+        if (err) {
+            console.error('Error executing query: ', err);
+            return res.status(500).json({ error: 'Database query failed' });
+        }
+        const projects = results.map(row => ({
+            id: row.PJID,
+            projectName: row.pName
+        }));        
+        res.json(projects);
+    });
 
+});
 
 app.get('/api/employees', (req, res) => {
     const sql5 = "SELECT Emp_id, eName from Employees;";
