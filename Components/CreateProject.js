@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import DragItem from './DragItem';
 import DropZone from './DropZone';
-import './CreateProject.css';
+import axios from 'axios';
+
 
 const CreateProject = () => {
     const [droppedItems, setDroppedItems] = useState([]);
-
+    const [employees, setEmployees] = useState([]);
+    
+    const [projectName, setProjectName] = useState(''); // State for project name
+    const [description, setDescription] = useState(''); // State for project description
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
     const handleDrop = (item) => {
         setDroppedItems((prevItems) => [...prevItems, item]);
     };
@@ -17,24 +24,142 @@ const CreateProject = () => {
         updatedItems.splice(index, 1);
         setDroppedItems(updatedItems);
     };
+    
 
+  
+    useEffect(() => {
+  
+      const fetchEmployees = async () => {
+  
+        try {
+  
+          const response = await axios.get('http://localhost:3000/api/employees');
+  
+          console.log(response.data);
+          // Create a Set to track unique employee IDs
+          const existingEmployeeIds = new Set(employees.map(employee => employee.id));
+          // Filter out duplicates
+          const newEmployees = response.data.filter(employee => !existingEmployeeIds.has(employee.id));
+          // Update the state with unique employees
+          setEmployees(prevEmployees => {
+            const existingIds = new Set(prevEmployees.map(employee => employee.id));
+            return newEmployees.reduce((acc, employee) => {  
+              if (!existingIds.has(employee.id)) {  
+                acc.push(employee);
+              }
+              return acc;
+            }, [...prevEmployees]);
+          });
+        } catch (err) {
+          setError('Error fetching employees');
+          console.error(err); // Log for debugging
+        } finally {
+            setLoading(false); // Set loading to false here
+        }
+        };    
+      fetchEmployees();
+      }, []); // Empty dependency array to run only once on mount
+  
+    // Log updated employees
+    useEffect(() => {
+      console.log("Updated employees:", employees);
+      setLoading(false)
+    }, [employees]);
+
+
+    const handleSubmit = async () => {
+        // Prepare the data to be submitted
+        const projectData = {
+            name: projectName,
+            description: description,
+            employees: droppedItems,
+        };
+        /*
+        try {
+            // Replace with your actual API endpoint for creating a project
+            const response = await axios.post('http://localhost:3000/api/projects', projectData);
+            console.log('Project created successfully:', response.data);
+            // Optionally reset the form
+            setProjectName('');
+            setDescription('');
+            setDroppedItems([]);
+        } catch (err) {
+            console.error('Error creating project:', err);
+            setError('Error creating project');
+        }
+            */ 
+    };
+
+
+
+    if (loading) return <div>Loading...</div>;
+
+    if (error) return <div>{error}</div>;
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="create-project-container">
-                <div className="create-project-box">
+        
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh'
+            }}>
+                <div style={{
+                    border: '1px solid #ccc',
+                    padding: '20px',
+                    borderRadius: '5px'
+                }}>
                     <h1>Create Your Project</h1>
-                    <div className="create-project-content">
-                        <div className="drag-items">
-                            <h2>Employees</h2>
-                            <DragItem name="Jeff Smith" />
-                            <DragItem name="Harry Simmons" />
-                            <DragItem name="Sarah Likely" />
+                    <input
+                        type="text"
+                        placeholder="Project Name"
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value)}
+                         style={{
+                            display: 'flex',
+                            justifyContent: 'space-around'
+                    }}/>
+                        <textarea
+                            placeholder="Project Description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            style={{
+                                   display: 'flex',
+                                    justifyContent: 'space-around'
+                        }}/>  
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-around'
+                    }}>
+                
+                        <div style={{
+                            border: '1px solid #ccc',
+                            padding: '10px', borderRadius: '5px'
+                        }}>
+                            <h2>Drag Items</h2>
+                            {employees.map(employee => (
+                                <DragItem key={employee.id} name={employee.eName} id={employee.id} />
+                            ))}
                         </div>
-                        <div className="drop-zone">
-                            <h2>Project Assignment</h2>
+                        <div style={{
+                            border: '1px solid #ccc',
+                            padding: '10px', borderRadius: '5px'
+                        }}>
+                            <h2>Drop Zone</h2>
                             <DropZone onDrop={handleDrop} />
                             {droppedItems.map((item, index) => (
-                                <div key={index} className="dropped-item">
+                                <div
+                                    key={index}
+                                    style={{
+                                        border: '1px solid #ccc',
+                                        padding: '10px',
+                                        borderRadius: '5px',
+                                        marginTop: '10px',
+                                        backgroundColor: 'lightblue',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                    }}>
                                     <p>{item.name}</p>
                                     <button onClick={() => handleRemoveItem(index)}>
                                         Remove
@@ -43,6 +168,14 @@ const CreateProject = () => {
                             ))}
                         </div>
                     </div>
+                    <button
+                        onClick={handleSubmit}
+                        style={{
+                            padding: '10px', borderRadius: '5px',
+                            border: 'none', backgroundColor: '#4CAF50',
+                            color: 'white', cursor: 'pointer',
+                            fontSize: '16' }} >
+                    Submit</button>
                 </div>
             </div>
         </DndProvider>
