@@ -6,7 +6,8 @@ import SignUp from './Components/SignUp';
 import Login from './Components/Login';
 import Dashboard from './Components/Dashboard';
 import CreateProject from './Components/CreateProject';
-
+import Assignskill from './Components/Assignskill';
+import EmployeeDash from './Components/EmployeeDash';
 
 function App() {
   return (
@@ -17,7 +18,9 @@ function App() {
       <Route path="/" element={<h1>Home</h1>} />
       <Route path="/SignUp" element={<SignUp/>} />
       <Route path="/dashboard" element={<Dashboard/>} />
+      <Route path="/emdashboard" element={<EmployeeDash/>} />
       <Route path="/Login" element={<Login/>} />
+      <Route path="/assignskill" element={<Assignskill />} />
       <Route path="/LogOut" element={<h1>Log Out</h1>} />
       <Route path="/Profile" element={<h1>Profile</h1>} />
       <Route path="/create-project" element={<CreateProject />} />
