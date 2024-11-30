@@ -16,10 +16,12 @@ function Login({ setUser }) {
     axios.post('http://localhost:3000/login', {email, password})
     .then(result => {
       console.log(result);
+
       if(result.data.loginStatus && result.data.Admin){
-        
+        localStorage.setItem('token', result.data.token);
         navigate('/dashboard');
       }else if(result.data.loginStatus) {
+        localStorage.setItem('token', result.data.token);
         navigate('/dashboard');
       }else{
         setError(result.data.Error)
