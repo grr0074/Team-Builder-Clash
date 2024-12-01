@@ -82,18 +82,24 @@ app.post('/login', (req, res) => {
 /* Signup heard */
 
 app.post('/signup' , (req,res) =>{
-    const  { name, email, password } = req.body;
-    console.log({ name, email, password })
-    const sql3 = "INSERT INTO Employees(eName,eEmail,PasswordHash) VALUES(?,?,?);";
-    db.query(sql3, [name,email,password] , (err, result) =>{
+    const  { name, email, password, manager } = req.body;
+    console.log({ name, email, password, manager })
+    const sql3 = "INSERT INTO Employees(eName,eEmail,PasswordHash, Manager) VALUES(?,?,?,?);";
+    db.query(sql3, [name,email,password,manager] , (err, result) =>{
         if (err) {
             return res.json({ signUpStatus: false, Error: "Error. Try another email input" });
         }
 
         if(result){
             console.log("Created new account as:")
-            console.log({ name, email, password })
-            return res.json({ signUpStatus: true})
+            console.log({ name, email, password, manager })
+            const token = jwt.sign({
+                role: "login", email: email,},
+                "jwt_secret_key", /* secretkeyneedtohide */
+                {expiresIn: '1d'}
+            )
+            
+            return res.json({ signUpStatus: true, token})
         }else{
             return res.json({ signUpStatus: false, Error: "Unable to create accout. Please try another." });
         }
@@ -116,31 +122,8 @@ app.post('/dashboard/assignskill', (req,res) =>{
 })
 
 /* Get Projects based on emailheard */
-/** 
-app.get('/api/projects', (req, res) => {
-    const email = req.query.email;
-    console.log(req.query);
-    console.log(email);
-
-    
-    const sql4 = "SELECT p.PJID, p.pName FROM Employees e JOIN Project_Assignment pa ON e.Emp_id = pa.Emp_id JOIN Projects p ON pa.PJID = p.PJID WHERE e.eEmail = ?;";
-    db.query(sql4, (err, results) => {
-        if (err) {
-            console.error('Error executing query: ', err);
-            return res.status(500).json({ error: 'Database query failed' });
-        }
-        const projects = results.map(row => ({
-            id: row.PJID,
-            projectName: row.pName
-        }));        
-        res.json(projects);
-    });
-});
-*/
 app.get('/api/projects', (req, res) => {
     const email = req.query.email; // Access email from query parameters
-    console.log(req.query); // Log the entire query object for debugging
-    console.log(email); // Log the email for debugging
     const sql4 = "SELECT p.PJID, p.pName FROM Employees e JOIN Project_Assignment pa ON e.Emp_id = pa.Emp_id JOIN Projects p ON pa.PJID = p.PJID WHERE e.eEmail = ?;";
     db.query(sql4, [email], (err, results) => { // Pass email as a parameter to the query
         if (err) {
