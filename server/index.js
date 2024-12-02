@@ -134,7 +134,7 @@ app.post('/dashboard/assignskill', (req,res) =>{
 
 })
 
-/* Get Projects based on emailheard */
+/* Get Projects based on emailheard  (WORK ON DASHBOARD)*/
 app.get('/api/projects', (req, res) => {
     const email = req.query.email; // Access email from query parameters
     const sql4 = "SELECT p.PJID, p.pName FROM Employees e JOIN Project_Assignment pa ON e.Emp_id = pa.Emp_id JOIN Projects p ON pa.PJID = p.PJID WHERE e.eEmail = ?;";
@@ -189,7 +189,49 @@ app.get('/api/get-email', (req, res) => {
 
 
 
+app.post('/api/create-project', (req, res) => {
+    const  { name, description, ids} = req.body;
+    console.log({ name, description, ids});
+    const sql7 = "INSERT INTO Projects(pName, PDescription) VALUES(?,?);";
+    const sql8 = `
+    INSERT INTO Project_Assignment (PJID, Emp_id) 
+    VALUES ((SELECT PJID FROM Projects WHERE pName = ?), ?);
+`;
 
+
+    db.query(sql7, [ name, description ], (err, results) => { // Pass email as a parameter to the query
+        if (err) {
+            console.error('Error executing query: ', err);
+            return res.status(500).json({ CreateStatus: false, Error: 'Database query failed' });
+        }
+        if(results){
+            console.log("Success create a project as ", name, description)
+
+            const employeeInsertions = ids.map(empId => {
+                return new Promise((resolve, reject) => {
+                    db.query(sql8, [name, empId], (err, results) => {
+                        if (err) {
+                            console.error('Error inserting into Project_Assignment: ', err);
+                            reject(err); // Reject the promise if there's an error
+                        } else {
+                            resolve(results);
+                        }
+                    });
+                });
+            });
+
+    // Wait for all insertions to complete
+            Promise.all(employeeInsertions)
+                .then(() => {
+                    console.log("All employee assignments inserted successfully.");
+                    return res.json({ CreateStatus: true });
+                })
+                .catch((err) => {
+                    console.error('Error inserting employee assignments:', err);
+                    return res.status(500).json({ CreateStatus: false, Error: 'Failed to insert employee assignments' });
+                });
+    }});   
+});
 
 
 
