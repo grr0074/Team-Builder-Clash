@@ -4,11 +4,13 @@ import React from 'react';
 import { useDrop } from 'react-dnd';
 
 const DropZone = ({ onDrop }) => {
-    const [{ isOver }, drop] = useDrop(() => ({
+    const [{ canDrop, isOver }, drop] = useDrop(() => ({
         accept: 'item',
         drop: (item) => onDrop(item),
         collect: (monitor) => ({
             isOver: monitor.isOver(),
+            canDrop: monitor.canDrop(),
+
         }),
     }));
 
@@ -19,8 +21,8 @@ const DropZone = ({ onDrop }) => {
                 border: `1px dashed ${isOver ? 'green' : 'black'}`,
                 padding: '10px',
             }}>
-            Drop here
-        </div>
+            {canDrop ? 'Release to drop' : 'Drag an item here'}        
+            </div>
     );
 };
 

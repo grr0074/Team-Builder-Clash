@@ -1,10 +1,10 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 
-const DragItem = ({ name }) => {
+const DragItem = ({ id, name }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type: 'item',
-        item: { name },
+        item: { id, name },
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),

@@ -4,6 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import DragItem from './DragItem';
 import DropZone from './DropZone';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const CreateProject = () => {
@@ -14,10 +15,13 @@ const CreateProject = () => {
     const [description, setDescription] = useState(''); // State for project description
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [nameError, setNameError] = useState(''); // State for project name error
+
+    const navigate = useNavigate();
+
   
     const handleDrop = (item) => {
-        setDroppedItems((prevItems) => [...prevItems, item]);
-    };
+        setDroppedItems((prevItems) => [...prevItems, { id: item.id, name: item.name }]);    };
 
     const handleRemoveItem = (index) => {
         const updatedItems = [...droppedItems];
@@ -69,25 +73,40 @@ const CreateProject = () => {
 
     const handleSubmit = async () => {
         // Prepare the data to be submitted
+        // Reset error messages
+        setNameError('');
+        // Validate project name
+        if (!projectName) {
+            setNameError('Project name is required.');
+            alert(nameError);
+            return; // Prevent submission if project name is empty
+        } 
+        const employeeIds = droppedItems.map(item => item.id); // Create an array of employee IDs
         const projectData = {
             name: projectName,
             description: description,
-            employees: droppedItems,
+            ids: employeeIds,
         };
-        /*
         try {
             // Replace with your actual API endpoint for creating a project
-            const response = await axios.post('http://localhost:3000/api/projects', projectData);
-            console.log('Project created successfully:', response.data);
+            const response = await axios.post('http://localhost:3000/api/create-project', projectData);
+            console.log('Project pass successfully:', response.data);
+
+            if(response.data.CreateStatus){
+                alert("Success Create Project and Assign to Employees");
+            }
+            navigate('/dashboard')
+
+
             // Optionally reset the form
-            setProjectName('');
+/*            setProjectName('');
             setDescription('');
-            setDroppedItems([]);
+            setDroppedItems([]); */
         } catch (err) {
             console.error('Error creating project:', err);
             setError('Error creating project');
         }
-            */ 
+            
     };
 
 
@@ -160,7 +179,7 @@ const CreateProject = () => {
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
                                     }}>
-                                    <p>{item.name}</p>
+                                    <p>{item.name} (ID: {item.id})</p> {/* Displaying the ID */}
                                     <button onClick={() => handleRemoveItem(index)}>
                                         Remove
                                     </button>
