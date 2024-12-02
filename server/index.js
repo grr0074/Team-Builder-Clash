@@ -112,10 +112,23 @@ app.post('/signup' , (req,res) =>{
 /* Assignskill heard */
 app.post('/dashboard/assignskill', (req,res) =>{
     const result = req.body;
-    console.log(req.body)
-    const skillstring = result.skills.join(', ');
-    console.log(skillstring);
+    const email = req.query.email; // Access email from query parameters
+    const skillstring = result.selectedSkills.join(', ');
 
+    const sql6 = "UPDATE Employees SET Skills = ? WHERE eEmail = ?;";
+    db.query(sql6, [skillstring, email], (err, results) => {
+        if (err) {
+            console.error('Error executing query: ', err);
+            return res.status(500).json({ error: 'Database query failed' });
+        }
+        if(results){
+            console.log("Update skills of " , email, " as: ", skillstring)
+            return res.json({AssignStatus: true})
+        }
+        else{
+            return res.json({AssignStatus: false, Error: "Unable to Assign."})
+        }        
+    });
     
 
 
