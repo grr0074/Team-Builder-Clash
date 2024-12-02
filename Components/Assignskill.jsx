@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
+import {  useNavigate } from "react-router-dom";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import axios from "axios";
 
 const skillsList = [
+
     'C',
     'C++',
     'Java',
@@ -12,11 +13,52 @@ const skillsList = [
     'Go',
     'Ruby',
     'PHP'
+
 ];
 
+
 const Assignskill = () => {
-    const [selectedSkills, setSelectedSkills] = useState([]);
+
+    const [selectedSkills, setSelectedSkills] = useState([])
+    const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchEmail = async () => {
+          try {
+            const token = localStorage.getItem('token');
+    
+            const result = await axios.get('http://localhost:3000/api/get-email', {
+              headers: {
+                Authorization: `${token}`
+              }
+            });
+    
+            const temp = result.data.email;
+            
+            setEmail(temp); // Set the email state
+//            console.log("Email: ", temp); // Use temp to log the correct email
+            setLoading(false);
+            return temp; // Return the email for further use
+          } catch (error) {
+            if (error.response) {
+              console.error("Error fetching email:", error.response.data.message);
+            } else if (error.request) {
+              console.error("No response received:", error.request);
+            } else {
+              console.error("Error:", error.message);
+            }
+            setError('Error fetching email');
+          }
+        };
+
+        
+        fetchEmail();
+    }, []);
+
 
     const handleCheckboxChange = (event) => {
         const skill = event.target.value;
@@ -26,33 +68,65 @@ const Assignskill = () => {
                 : [...prevSkills, skill]
         );
     };
-
+  
     const handleSubmit = async (event) => {
-        event.preventDefault();
-        axios.post('http://localhost:3000/dashboard/assignskill', { selectedSkills })
-            .then(result => {
-                console.log(result);
-                navigate('/emdashboard'); // Redirect to project dashboard
-            })
-            .catch(err => console.log(err));
-            navigate('/emdashboard');
-    };
 
+        event.preventDefault();
+        axios.post('http://localhost:3000/dashboard/assignskill' ,{ selectedSkills } , {params: { email }})
+        .then(result => {
+            console.log(result);
+            if(result.data.AssignStatus){
+                navigate('/dashboard'); // Redirect to create-project page
+            }
+            else{
+                alert(result.data.Error);
+                navigate('/dashboard');                
+            }
+        })
+        .catch(err => console.log(err))
+
+    };   
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+  
     return (
+        <div>
+
+        <h1>Select Your Skills</h1>
+
         <form onSubmit={handleSubmit}>
+
             {skillsList.map((skill) => (
+
                 <div key={skill}>
-                    <input
-                        type="checkbox"
-                        value={skill}
-                        onChange={handleCheckboxChange}
-                    />
-                    <label>{skill}</label>
+
+                    <label>
+
+                        <input
+
+                            type="checkbox"
+
+                            value={skill}
+
+                            checked={selectedSkills.includes(skill)}
+
+                            onChange={handleCheckboxChange}
+
+                        />
+                        {skill}
+                    </label>
                 </div>
             ))}
             <button type="submit">Submit</button>
         </form>
-    );
-};
+    </div>
 
-export default Assignskill;
+    
+
+
+    
+  )
+}
+
+export default Assignskill

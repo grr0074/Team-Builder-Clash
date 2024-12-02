@@ -21,9 +21,9 @@ const Dashboard = () => {
         });
 
         const temp = result.data.email;
-        console.log("temp: ", temp);
+//        console.log("temp: ", temp);
         setEmail(temp); // Set the email state
-        console.log("Email: ", temp); // Use temp to log the correct email
+//        console.log("Email: ", temp); // Use temp to log the correct email
         return temp; // Return the email for further use
       } catch (error) {
         if (error.response) {
