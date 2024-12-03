@@ -3,45 +3,40 @@ import './LogIn.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-
 function Login({ setUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [Error, setError] = useState('');
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post('http://localhost:3000/login', {email, password})
-    .then(result => {
-      console.log(result);
+    try {
+      const response = await axios.post('http://localhost:3000/login', { email, password });
+      console.log(response);
 
-      if(result.data.loginStatus && result.data.Admin){
-        localStorage.setItem('token', result.data.token);
+      if (response.data.loginStatus && response.data.Admin) {
+        localStorage.setItem('token', response.data.token);
         navigate('/dashboard');
-      }else if(result.data.loginStatus) {
-        localStorage.setItem('token', result.data.token);
-        navigate('/dashboard');
-      }else{
-        setError(result.data.Error)
+      } else if (response.data.loginStatus) {
+        localStorage.setItem('token', response.data.token);
+        navigate('/assignskill');
+      } else {
+        setError(response.data.Error);
       }
-
-      return email;
-
-
-  })
-    .catch(err => console.log(err))
-
-
+    } catch (err) {
+      console.log(err);
+      setError('An error occurred during login.');
+    }
   };
 
   return (
     <div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <div classname = "text-danger">
-          {Error && Error}
+        <div className="text-danger">
+          {error && error}
         </div>
         <input
           type="email"
