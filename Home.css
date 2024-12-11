@@ -1,0 +1,15 @@
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items at the start (top) */
+    height: calc(100vh - 60px); /* Adjust height to account for the navbar height */
+    padding-top: 20px; /* Add some padding to create space below the navbar */
+    background-color: #f0f0f0; /* Light grey background */
+  }
+  
+  .welcome-message {
+    font-size: 3rem;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+  }
