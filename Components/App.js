@@ -7,7 +7,7 @@ import Login from './Components/Login';
 import Dashboard from './Components/Dashboard';
 import CreateProject from './Components/CreateProject';
 import Assignskill from './Components/Assignskill.jsx';
-
+import Home from './Components/Home.js';
 
 function App() {
   return (
