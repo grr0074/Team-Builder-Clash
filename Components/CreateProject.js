@@ -72,41 +72,49 @@ const CreateProject = () => {
 
 
     const handleSubmit = async () => {
-        // Prepare the data to be submitted
         // Reset error messages
-        setNameError('');
+        setNameError('');  
         // Validate project name
-        if (!projectName) {
+            if (!projectName) {  
             setNameError('Project name is required.');
             alert(nameError);
             return; // Prevent submission if project name is empty
-        } 
+            } 
         const employeeIds = droppedItems.map(item => item.id); // Create an array of employee IDs
         const projectData = {
             name: projectName,
             description: description,
             ids: employeeIds,
-        };
-        try {
-            // Replace with your actual API endpoint for creating a project
-            const response = await axios.post('http://localhost:3000/api/create-project', projectData);
-            console.log('Project pass successfully:', response.data);
+            }; 
+            try {
+            // First API call to create a project
+                const response = await axios.post('http://localhost:3000/api/create-project', projectData);
+                console.log('Project created successfully:', response.data);
+                    if (response.data.CreateStatus) {
+                    // Prepare data for the second API call
+                    const notificationData = {
+                        employeeIds: employeeIds,
+                        projectName: projectName,
+                    };
+      
+                    try {
+                        // Second API call to send notifications
+                        const response2 = await axios.post('http://localhost:3000/api/send_noti', notificationData);
+                        console.log('Notification sent successfully:', response2.data);
+                        navigate('/dashboard');  
 
-            if(response.data.CreateStatus){
-                alert("Success Create Project and Assign to Employees");
+                    } catch (err) {
+                        console.error('Error sending notification:', err);
+                        setError('Error sending notification');
+                    }
+                    alert("Success! Project created and assigned to employees.");
+                }
+                } catch (err) {
+                console.error('Error creating project:', err);
+                setError('Error creating project');
             }
-            navigate('/dashboard')
 
 
-            // Optionally reset the form
-/*            setProjectName('');
-            setDescription('');
-            setDroppedItems([]); */
-        } catch (err) {
-            console.error('Error creating project:', err);
-            setError('Error creating project');
-        }
-            
     };
 
 
