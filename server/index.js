@@ -4,6 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser'; //remember to: npm install cookie-parser
+import sgMail from '@sendgrid/mail';  // npm install --save @sendgrit/mail
 
 
 
@@ -187,7 +188,8 @@ app.get('/api/get-email', (req, res) => {
     }
 });
 
-
+const api_key = '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';
+sgMail.setApiKey(api_key)
 
 app.post('/api/create-project', (req, res) => {
     const  { name, description, ids} = req.body;
@@ -231,6 +233,52 @@ app.post('/api/create-project', (req, res) => {
                     return res.status(500).json({ CreateStatus: false, Error: 'Failed to insert employee assignments' });
                 });
     }});   
+});
+
+
+app.post("/api/send_noti" , (req, res) => {
+    const  empIDs = req.body.employeeIds;
+    const projectName = req.body.projectName;
+    console.log(empIDs);
+    let emails = [];   
+    if (!Array.isArray(empIDs) || empIDs.length === 0) {
+        return res.status(400).json({ error: "Invalid empIDs list" });
+    }
+
+    const sqlmarks = empIDs.map(() => '?').join(',');
+    const sql9 = `SELECT eEmail FROM Employees WHERE Emp_id IN (${sqlmarks});`;
+    db.query(sql9, empIDs, (err, results) => {
+
+        if (err) {
+            console.error('Error fetching emails:', err);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+        // Extract emails from the results
+        emails = results.map(row => row.eEmail);
+        console.log("List emails:",emails);
+
+        const msg = {
+            to: emails, // Change to your recipient
+            from: 'teambuilderclash@gmail.com', // Change to your verified sender
+            subject: 'Inviting to Project',
+            text: `You have been Assign to a new Project call ${projectName}, lets check on your Dashboard`,
+            html: `<strong>You have been Assign to a new Project call ${projectName}, lets check on your Dashboard</strong>`,
+          }
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log('Notification emails sent')
+              return res.json({SendNotiStatus: true})
+            })
+            .catch((error) => {
+              console.error(error)
+              return res.json({SendNotiStatus: false} )
+
+            })
+
+
+    });
+
 });
 
 
