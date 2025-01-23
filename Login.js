@@ -13,6 +13,12 @@ function Login({ setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Check valid email input
+    if (!email.includes('@')) {
+      setError('Please enter a valid email address.');
+      return; // Stop the function if the email is invalid
+    };
+    
     axios.post('http://localhost:3000/login', {email, password})
     .then(result => {
       console.log(result);
