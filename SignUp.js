@@ -15,6 +15,21 @@ function SignUp({ setUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email pattern
+    if (!emailPattern.test(email)) {
+      setError('Please enter a valid email address.');
+      return; // Stop the function if the email is invalid
+    }
+    
+    // Password validation
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // At least 8 characters, at least one letter and one number
+    if (!passwordPattern.test(password)) {
+      setError('Password must be at least 8 characters long and include both letters and numbers.');
+      return; // Stop the function if the password is invalid
+    }
+    
     axios.post('http://localhost:3000/signup', {name, email, password})
     .then(result => {
       console.log(result);
